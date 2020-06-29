@@ -1,3 +1,5 @@
+   <meta charset="utf-8" emacsmode="-*- markdown -*-"> <link rel="stylesheet" href="https://casual-effects.com/markdeep/latest/journal.css?">
+
 # smart_contracts
 
           +--------------------------------+      +---------------------+
