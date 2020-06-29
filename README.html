@@ -1,11 +1,17 @@
+   <meta charset="utf-8" emacsmode="-*- markdown -*-"> <link rel="stylesheet" href="https://casual-effects.com/markdeep/latest/journal.css?">
 
-# smart_contracts
+                          **Smart Contract**
+
+#Escrow
+
+##Diagram
+
 **************************************************************************************************************
 *                                                                                                            *
 *                  +--------------------------------+      +---------------------+                           *
 *                  |        modifier                |      |     function        |                           *
 *                  +--------------------------------+      +---------------------+                           *
-*                  |   check_on_init_installment()  |      |  prime_day_Payout() +<---------------------+    *
+*                  |   check_on_init_installment()  |      |  prime_day_Payout() +<--------------------.     *
 *                  |                                |      |                     |                      |    *
 *                  +---------------+----------------+      +---------+-----------+                      |    *
 *                                  |                                 |                                  |    *
@@ -20,24 +26,24 @@
 *              |                           provable_query()                                     |       |    *
 *              |                                                                                |       |    *
 *              +----------------------------------------+---------------------------------------+       |    *
-*              |  if (_type == "CurrencyConversion") =v |        if (_type == "DayofMonth") =v  |       |    *
+*              |  if (_type == "CurrencyConversion") => |        if (_type == "DayofMonth") =>  |       |    *
 *              |  executes immediately                  |        executes in one day            |       |    *
 *              +----------------------------------------+---------------------------------------+       |    *
 *              |                      pendingQueries[queryId] = QueryType(true,_type);          |       |    *
 *              |                                                                                |       |    *
 *              +--------------------------------------+-----------------------------------------+       |    *
 *                                                     |                                                 |    *
+*                                                     v                                                 |    *
+*                                                    .--.                                               |    *
+*                                                .--+    |                                              |    *
+*                                           .---+         '--.                                          |    *
+*                                          |  Provable Oracle |                                         |    *
+*                                          |                  |                                         |    *
+*                                           '---------+-------'                                         |    *
 *                                                     |                                                 |    *
-*                                                XXXXXvXXXXXX                                           |    *
-*                                              XXX           X                                          |    *
-*                                         XXXXXX             XXXXXXXXXXX                                |    *
-*                                        XX  XX               XX       X                                |    *
-*                                        X                             X                                |    *
-*                                        XX     Provable Oracle       XX                                |    *
-*                                         XX                         XX                                 |    *
-*                                          XX----------+-------------X                                  |    *
-*                                                      |                                                |    *
-*     +------------------------------------------------v----------------------------------------------| |    *
+*                                                     |                                                 |    *
+*                                                     v                                                 |    *
+*     +-----------------------------------------------+-----------------------------------------------+ |    *
 *     |                                   _callback()                                                 | |    *
 *     +-----------------------------------------------------------------------------------------------+ |    *
 *     |                    require (pendingQueries[myid].exists == true);                             | |    *
@@ -47,13 +53,16 @@
 *     |     if (pendingQueries[myid].exists._type      |    if (pendingQueries[myid].exists._type     | |    *
 *     |         == "CurrencyConvert")=>                |        == "DayofMonth")                      | |    *
 *     |                                                |                                              | |    *
-*     |      funds_change(1/stringToUint(result) * 2); |       split string                           | |    *
+*     |      funds_change(1/stringToUint(result)*2);   |       split string                           | |    *
 *     |                                                |                                              | |    *
 *     |                                                |    if(check_if_prime(stringToUint(_day)      | |    *
 *     |                                                |         funds_change(.01*this.balance);      | |    *
 *     |                                                |                                              | |    *
 *     +------------------------------------------------+---------------------+------------------------+ |    *
 *                                                                            |                          |    *
-*                                                                            +--------------------------+    *
+*                                                                             '------------------------'     *
 **************************************************************************************************************
 
+
+
+<!-- Markdeep: --><script src="https://casual-effects.com/markdeep/latest/markdeep.min.js?" charset="utf-8"></script>
