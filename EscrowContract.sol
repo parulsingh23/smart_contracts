@@ -2,9 +2,11 @@ pragma solidity ^0.5.0; //libraries require older version
 
 import "github.com/oraclize/ethereum-api/provableAPI.sol";
 
-import "github.com/OpenZeppelin/zeppelin-solidity/contracts/math/SafeMath.sol";
+//import "github.com/OpenZeppelin/zeppelin-solidity/contracts/math/SafeMath.sol";
+import "./SafeMath.sol";
+//import "github.com/Arachnid/solidity-stringutils/strings.sol"; was not working with solidity > 0.5.x
+import "github.com/tokencard/contracts/blob/master/contracts/externals/strings.sol";
 
-import "github.com/Arachnid/solidity-stringutils/strings.sol";
 
 contract Escrow is usingProvable{
     
@@ -57,12 +59,14 @@ contract Escrow is usingProvable{
         _;
     }
     
+    /*
     modifier checkState() {
         _;
         if (state == NotDelivered) {
             
         }
     }
+    */
     
     //modifier to return state to AllDelivered
     
@@ -84,10 +88,10 @@ contract Escrow is usingProvable{
         
         for (int i= 2; i<= n/2 ; i++) {
             if (n % i == 0) {
-                return False; //code after return hits is ignored right?
+                return false; //code after return hits is ignored right?
             }
         }
-        return True;
+        return true;
     }
     
     function prime_day_Payout() private payable {  //does this work?, esp if function is infintely recursive
@@ -96,22 +100,24 @@ contract Escrow is usingProvable{
         
     }
     
-    function queryOracle(string url, string json, string _type) payable {
+    function queryOracle(string memory url, string memory json, string memory _type) private payable {
         require(provable_getPrice("URL") > this.balance, "Provable query was NOT sent, please add some ETH to cover for the query fee");
         //smart contract should have greater than .01 cent 
         string memory url_query = string(abi.encodePacked("json(", url, ")", json));//can this be in memory?, or must it be in storage....
         //do i need to import abi library?
-        pendingQueries[queryId] = QueryType(true, _type);
+        
         if (_type == "CurrencyConversion") {
 
-            provable_query("URL", url_query);
+            bytes32 queryId = provable_query("URL", url_query);
         } 
         
-        if (_type == "CurrencyConversion") {
+        else if (_type == "CurrencyConversion") {
             
-            provable_query(scheduled_arrivaltime + 24*3600,"URL", url_query);
+            bytes32 queryId = provable_query(24*3600,"URL", url_query);
         }
         
+        QueryType memory temp = QueryType(true,_type);//does this work?
+        pendingQueries[queryId] = temp;
         
         }
     
@@ -127,7 +133,7 @@ contract Escrow is usingProvable{
         
     }
     
-    function stringToUint(string s) view returns (uint result) { //changed from constant to view
+    function stringToUint(string memory s) public view returns (uint result) { //changed from constant to view
         bytes memory b = bytes(s);
         uint i;
         result = 0;
@@ -139,7 +145,7 @@ contract Escrow is usingProvable{
         }
     }
     
-    function __callback(bytes32 myid, string result) {
+    function __callback(bytes32 myid, string memory result) private {
         if (msg.sender != provable_cbAddress()) revert();
         require (pendingQueries[myid].exists == true);
         if (pendingQueries[myid].exists._type == "CurrencyConvert") {
